@@ -73,7 +73,7 @@ int main(){
 
     cudaMemcpy(h_ref,d_c,nBytes,cudaMemcpyDeviceToHost);
 
-    vectro_add_cpu(h_a,h_b,h_c,N);
+    vector_add_cpu(h_a,h_b,h_c,N);
     check_result(h_c,h_ref,N);
 
     free(h_a);
