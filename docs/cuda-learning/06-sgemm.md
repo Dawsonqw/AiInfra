@@ -1,4 +1,4 @@
-# Chapter 4: SGEMM — 矩阵乘法与 Shared Memory Tiling
+# Chapter 6: SGEMM — 矩阵乘法与 Shared Memory Tiling
 
 ## 目标
 

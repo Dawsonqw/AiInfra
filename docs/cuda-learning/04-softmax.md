@@ -1,4 +1,4 @@
-# Chapter 3: Online Safe Softmax — Warp Reduce
+# Chapter 4: Online Safe Softmax — Warp Reduce
 
 ## 目标
 
@@ -35,10 +35,9 @@ FlashAttention 里用的就是这个技巧。
 
 ## CUDA C++ 要点
 
-1. 先实现 `warp_reduce_sum` 和 `warp_reduce_max`（纯寄存器，O(log WARP_SIZE)）
-2. 再用它们实现 `block_reduce_sum` 和 `block_reduce_max`（warp + smem）
-3. Online Softmax 的难点是 **跨线程 merge `(m, d)`**—需要自定义 merge 操作
-4. 参考 LeetCUDA 的 `warp_reduce_md_op`（`src/Reference/LeetCUDA/kernels/softmax/`）
+1. `warp_reduce_sum` / `warp_reduce_max` 在 Ch3 已掌握，直接复用
+2. Online Softmax 的难点是 **跨线程 merge `(m, d)`**—需要自定义 merge 操作
+3. 参考 LeetCUDA 的 `warp_reduce_md_op`（`LeetCUDA/kernels/softmax/softmax.cu`）
 
 ## Triton 要点
 

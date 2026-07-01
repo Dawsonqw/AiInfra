@@ -1,4 +1,4 @@
-# Chapter 5: Triton 入门
+# Chapter 7: Triton 入门
 
 ## 目标
 

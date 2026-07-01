@@ -1,0 +1,2 @@
+add_executable(elementwise my_kernel.cu)
+set_target_properties(elementwise PROPERTIES CUDA_ARCHITECTURES 89)

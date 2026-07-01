@@ -1,0 +1,2 @@
+add_executable(mat_transpose my_kernel.cu)
+set_target_properties(mat_transpose PROPERTIES CUDA_ARCHITECTURES 89)
