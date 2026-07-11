@@ -31,7 +31,7 @@ void __global__ device_vec_add(float *a,float *b,float *c,int N){
 
 int main(){
     int N=5*1e6;
-    int size=N*sizeof(float);
+    size_t size=static_cast<size_t>(N)*sizeof(float);
     float *h_a,*h_b,*h_c,*h_result;
     h_a=(float*)malloc(size);
     h_b=(float*)malloc(size);
@@ -70,7 +70,7 @@ int main(){
 
     float h2d_ms=0.0f;
     CUDA_CHECK(cudaEventElapsedTime(&h2d_ms,start,stop));
-    double h2d_bytes=2*size*repeat;
+    double h2d_bytes=2.0f*static_cast<double>(size)*repeat;
     double h2d_gbs=(h2d_bytes/(h2d_ms/1000))/1e9;
     printf("h2d avg time:%.5f ms,h2d bandwith:%.2f GB/s\n",h2d_ms/repeat,h2d_gbs);
 
@@ -85,7 +85,7 @@ int main(){
     
     float kernel_ms=0.0f;
     CUDA_CHECK(cudaEventElapsedTime(&kernel_ms,start,stop));
-    double kernel_bytes=3*size*repeat;
+    double kernel_bytes=3.0f*static_cast<double>(size)*repeat;
     double kernel_gbs=(kernel_bytes/(kernel_ms/1000))/1e9;
     printf("kernel avg time:%.5f ms,kernel bandwith:%.2f GB/s\n",kernel_ms/repeat,kernel_gbs);
 
@@ -99,7 +99,7 @@ int main(){
 
     float d2h_ms=0.0f;
     CUDA_CHECK(cudaEventElapsedTime(&d2h_ms,start,stop));
-    double d2h_bytes=size*repeat;
+    double d2h_bytes=static_cast<double>(size)*repeat;
     double d2h_gbs=(d2h_bytes/(d2h_ms/1000))/1e9;
     printf("d2h avg time:%.5f ms,d2h bandwith:%.2f GB/s\n",d2h_ms/repeat,d2h_gbs);
 
