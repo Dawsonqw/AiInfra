@@ -30,7 +30,7 @@ void __global__ device_vec_add(float *a,float *b,float *c,int N){
 }
 
 int main(){
-    int N=5*1e4;
+    int N=5*1e6;
     int size=N*sizeof(float);
     float *h_a,*h_b,*h_c,*h_result;
     h_a=(float*)malloc(size);
@@ -53,7 +53,7 @@ int main(){
     CUDA_CHECK(cudaMemcpy(d_a,h_a,size,cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_b,h_b,size,cudaMemcpyHostToDevice));
     int block_size=256;
-    int grid_size=(block_size+N-1)/block_size;
+    int grid_size=(N+block_size-1)/block_size;
     device_vec_add<<<grid_size,block_size>>>(d_a,d_b,d_c,N);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaDeviceSynchronize());
@@ -72,7 +72,7 @@ int main(){
     CUDA_CHECK(cudaEventElapsedTime(&h2d_ms,start,stop));
     double h2d_bytes=2*size*repeat;
     double h2d_gbs=(h2d_bytes/(h2d_ms/1000))/1e9;
-    printf("h2d avg time:%.5f ms,h2d bandwith :%.2f GB/s\n",h2d_ms/repeat,h2d_gbs);
+    printf("h2d avg time:%.5f ms,h2d bandwith:%.2f GB/s\n",h2d_ms/repeat,h2d_gbs);
 
 
     // kernel bandwith
@@ -87,7 +87,7 @@ int main(){
     CUDA_CHECK(cudaEventElapsedTime(&kernel_ms,start,stop));
     double kernel_bytes=3*size*repeat;
     double kernel_gbs=(kernel_bytes/(kernel_ms/1000))/1e9;
-    printf("kernel avg time:%.5f ms,kernel bandwith:%.2f GB/s\n",kernel_ms/1000,kernel_gbs);
+    printf("kernel avg time:%.5f ms,kernel bandwith:%.2f GB/s\n",kernel_ms/repeat,kernel_gbs);
 
     // D2H bandwith
     CUDA_CHECK(cudaEventRecord(start));
@@ -101,17 +101,20 @@ int main(){
     CUDA_CHECK(cudaEventElapsedTime(&d2h_ms,start,stop));
     double d2h_bytes=size*repeat;
     double d2h_gbs=(d2h_bytes/(d2h_ms/1000))/1e9;
-    printf("d2h avg time:%.5f ms,d2h bandwith:%.2f GB/s\n",d2h_ms/1000,d2h_gbs);
+    printf("d2h avg time:%.5f ms,d2h bandwith:%.2f GB/s\n",d2h_ms/repeat,d2h_gbs);
 
     // cmp
     bool flag=true;
+    float max_offset=0.0f;
     for(int i=0;i<N;i++){
-        if(std::fabs(h_result[i]-h_c[i])>1e-6){
+        float offset=std::fabs(h_result[i]-h_c[i]);
+        max_offset=std::max(offset,max_offset);
+        if(offset>1e-6){
             flag=false;
             printf("data idx:%d, host item:%.6f,device item:%.6f\n",i,h_c[i],h_result[i]);
-            break;
         }
     }
+    printf("max offset:%.5f\n",max_offset);
 
     if(!flag){
         printf("data not match!\n");
@@ -123,6 +126,8 @@ int main(){
     free(h_b);
     free(h_c);
     free(h_result);
+    CUDA_CHECK(cudaEventDestroy(start));
+    CUDA_CHECK(cudaEventDestroy(stop));
     CUDA_CHECK(cudaFree(d_a));
     CUDA_CHECK(cudaFree(d_b));
     CUDA_CHECK(cudaFree(d_c));

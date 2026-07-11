@@ -140,7 +140,7 @@ idx=blockIdx.x*blockDim.x+threadidx.x
 
 | Version | 核心思路         | 状态 |
 | ------- | ------------ | -- |
-| v0      | 最简单的 CUDA 实现 |    |
+| v0      | 最简单的 CUDA 实现 | pass   |
 | v1      |              |    |
 | v2      |              |    |
 
@@ -149,13 +149,14 @@ idx=blockIdx.x*blockDim.x+threadidx.x
 核心思路：
 
 ```cpp
+一个线程计算一个索引以及对应的元素
 ```
 
 正确性结果：
 
-* 最大误差：
-* 是否通过：
-* 存在的问题：
+* 最大误差：0.0000f
+* 是否通过：pass
+* 存在的问题：计算强度很低，1/12
 
 ### v1
 
