@@ -103,6 +103,7 @@ int main(){
     for(int i=0;i<repeat;i++){
         device_vec_add<<<grid_size,block_size>>>(d_a,d_b,d_c,N);
     }
+    CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaEventRecord(stop));
     CUDA_CHECK(cudaEventSynchronize(stop));
     
@@ -117,6 +118,7 @@ int main(){
     for(int i=0;i<repeat;i++){
         CUDA_CHECK(cudaMemcpy(h_result,d_c,size,cudaMemcpyDeviceToHost));
     }
+    CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaEventRecord(stop));
     CUDA_CHECK(cudaEventSynchronize(stop));
 

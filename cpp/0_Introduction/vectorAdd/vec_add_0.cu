@@ -69,6 +69,7 @@ int main(){
         CUDA_CHECK(cudaMemcpy(d_a,h_a,size,cudaMemcpyHostToDevice));
         CUDA_CHECK(cudaMemcpy(d_b,h_b,size,cudaMemcpyHostToDevice));
     }
+    CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaEventRecord(stop));
     CUDA_CHECK(cudaEventSynchronize(stop));
 
@@ -98,6 +99,7 @@ int main(){
     for(int i=0;i<repeat;i++){
         CUDA_CHECK(cudaMemcpy(h_result,d_c,size,cudaMemcpyDeviceToHost));
     }
+    CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaEventRecord(stop));
     CUDA_CHECK(cudaEventSynchronize(stop));
 
