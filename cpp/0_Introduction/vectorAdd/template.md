@@ -156,7 +156,9 @@ idx=blockIdx.x*blockDim.x+threadidx.x
 
 * 最大误差：0.0000f
 * 是否通过：pass
-* 存在的问题：计算强度很低，1/12
+* 存在的问题：算术强度很低，1FlLOP/12 Bytes -> 0.0833 FLOP/Byte,两次global memory load一次global memory store,  
+  对于这个kernel，实测kernel bandwith为：226.35 GB/s，则需要算力:226.35*10e9 Byte/s*1/12Flop/Byte=19*10e9 -> 19GFlop/s，当前计算卡浮点算力大约21TFLOPS。
+* 
 
 ### v1
 
