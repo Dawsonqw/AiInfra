@@ -158,37 +158,29 @@ idx=blockIdx.x*blockDim.x+threadidx.x
 * 是否通过：pass
 * 存在的问题：算术强度很低，1FlLOP/12 Bytes -> 0.0833 FLOP/Byte,两次global memory load一次global memory store,  
   对于这个kernel，实测kernel bandwith为：226.35 GB/s，则需要算力:226.35*10e9 Byte/s*1/12Flop/Byte=19*10e9 -> 19GFlop/s，当前计算卡浮点算力大约21TFLOPS。
-* 
+* 现状：N=5*1e6,Block size:256,   
+  h2d avg time:3.26753 ms,h2d bandwith:12.24 GB/s  
+  kernel avg time:0.26508 ms,kernel bandwith:226.35 GB/s  
+  d2h avg time:1.48797 ms,d2h bandwith:13.44 GB/s  
 
 ### v1
 
 相比 v0 的变化：
 
-*
-*
+* 使用grid-stride loop，实测没有性能提升，价值在于代码结构通用，利于扩展
+* float4,向量化访问
 
 ```cpp
 ```
 
 正确性结果：
 
-* 最大误差：
-* 是否通过：
+* 最大误差：0.0f
+* 是否通过：pass
+* 现状：h2d avg time:3.26651 ms,h2d bandwith:12.25 GB/s  
+  kernel avg time:0.25857 ms,kernel bandwith:232.05 GB/s  
+  d2h avg time:1.48762 ms,d2h bandwith:13.44 GB/s
 
-### v2
-
-相比 v1 的变化：
-
-*
-*
-
-```cpp
-```
-
-正确性结果：
-
-* 最大误差：
-* 是否通过：
 
 ### 与官方实现的差异
 
