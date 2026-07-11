@@ -33,10 +33,14 @@ int main(){
     int N=5*1e6;
     size_t size=static_cast<size_t>(N)*sizeof(float);
     float *h_a,*h_b,*h_c,*h_result;
-    h_a=(float*)malloc(size);
-    h_b=(float*)malloc(size);
-    h_c=(float*)malloc(size);
-    h_result=(float*)malloc(size);
+    // h_a=(float*)malloc(size);
+    // h_b=(float*)malloc(size);
+    // h_c=(float*)malloc(size);
+    // h_result=(float*)malloc(size);
+    CUDA_CHECK(cudaMallocHost(&h_a,size));
+    CUDA_CHECK(cudaMallocHost(&h_b,size));
+    CUDA_CHECK(cudaMallocHost(&h_c,size));
+    CUDA_CHECK(cudaMallocHost(&h_result,size));
 
     init_host_data(h_a,h_b,h_c,N);
 
@@ -122,10 +126,14 @@ int main(){
         printf("data match!\n");
     }
 
-    free(h_a);
-    free(h_b);
-    free(h_c);
-    free(h_result);
+    // free(h_a);
+    // free(h_b);
+    // free(h_c);
+    // free(h_result);
+    CUDA_CHECK(cudaFreeHost(h_a));
+    CUDA_CHECK(cudaFreeHost(h_b));
+    CUDA_CHECK(cudaFreeHost(h_c));
+    CUDA_CHECK(cudaFreeHost(h_result));
     CUDA_CHECK(cudaEventDestroy(start));
     CUDA_CHECK(cudaEventDestroy(stop));
     CUDA_CHECK(cudaFree(d_a));
