@@ -7,7 +7,7 @@
         cudaError_t err=call; \
         if(err!=cudaSuccess){  \
             printf("cuda error:%s\n",cudaGetErrorString(err)); \
-            return; \
+            std::exit(EXIT_FAILURE); \
         } \
     }while(0); 
 
@@ -30,7 +30,7 @@ void __global__ device_vec_add(float *a,float *b,float *c,int N){
 }
 
 int main(){
-    int N=5*1e6;
+    constexpr int N = 5'000'000'0;
     size_t size=static_cast<size_t>(N)*sizeof(float);
     float *h_a,*h_b,*h_c,*h_result;
     // h_a=(float*)malloc(size);
