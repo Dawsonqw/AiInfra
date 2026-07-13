@@ -53,6 +53,10 @@ build/onnx_parser_cli asserts/resnet18.onnx
 计算图环路；节点原始顺序保存在 `GraphInfo::nodes`，可执行拓扑顺序保存在
 `GraphInfo::topological_order`。
 
+算子代码按文件拆分在 `include/onnx_parser/operators/` 与
+`src/onnx_parser/operators/` 下：每个算子拥有独立实现文件，`common.*` 放置
+公共 shape/属性辅助函数，`register_builtin.cc` 只负责内置算子注册。
+
 ### 算子扩展模型
 
 算子由 `Operator` 多态基类定义，核心接口是：

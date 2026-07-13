@@ -34,8 +34,17 @@ add_library(onnx_parser
     src/onnx_parser/onnx_parser.cc
     src/onnx_parser/operator.cc
     src/onnx_parser/operator_registry.cc
-    src/onnx_parser/builtin_operators.cc
     src/onnx_parser/shape_inference.cc
+    src/onnx_parser/operators/common.cc
+    src/onnx_parser/operators/unary.cc
+    src/onnx_parser/operators/add.cc
+    src/onnx_parser/operators/batch_normalization.cc
+    src/onnx_parser/operators/conv.cc
+    src/onnx_parser/operators/max_pool.cc
+    src/onnx_parser/operators/global_average_pool.cc
+    src/onnx_parser/operators/flatten.cc
+    src/onnx_parser/operators/gemm.cc
+    src/onnx_parser/operators/register_builtin.cc
     include/onnx/onnx.pb.cc
 )
 target_include_directories(onnx_parser
