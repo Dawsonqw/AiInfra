@@ -12,7 +12,7 @@ namespace aiinfra::onnx::operators {
 using Shape = std::vector<Dimension>;
 
 TensorInfo make_output(const OperatorContext& context, std::size_t index, Shape shape,
-                       int32_t elem_type);
+                       DataType dtype);
 const TensorInfo& require_input(const OperatorContext& context, std::size_t index);
 std::vector<int64_t> spatial_attribute(const OperatorContext& context,
                                        const std::string& name,

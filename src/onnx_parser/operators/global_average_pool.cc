@@ -12,7 +12,7 @@ std::vector<TensorInfo> GlobalAveragePoolOperator::infer_shape(const OperatorCon
     auto shape = input.shape;
     shape[2] = {true, 1, {}};
     shape[3] = {true, 1, {}};
-    return {make_output(context, 0, std::move(shape), input.elem_type)};
+    return {make_output(context, 0, std::move(shape), input.dtype)};
 }
 
 }  // namespace aiinfra::onnx::operators

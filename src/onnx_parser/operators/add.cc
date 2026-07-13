@@ -33,7 +33,7 @@ std::vector<TensorInfo> AddOperator::infer_shape(const OperatorContext& context)
         const Dimension* right = rhs_index < rhs.shape.size() ? &rhs.shape[rhs_index] : nullptr;
         shape[rank - 1 - offset] = broadcast_dimension(left, right);
     }
-    return {make_output(context, 0, std::move(shape), lhs.elem_type)};
+    return {make_output(context, 0, std::move(shape), lhs.dtype)};
 }
 
 }  // namespace aiinfra::onnx::operators

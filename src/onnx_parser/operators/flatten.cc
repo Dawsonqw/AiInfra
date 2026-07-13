@@ -20,7 +20,7 @@ std::vector<TensorInfo> FlattenOperator::infer_shape(const OperatorContext& cont
     int64_t axis = context.int_attribute("axis", 1);
     if (axis < 0) axis += static_cast<int64_t>(input.shape.size());
     if (axis < 0 || axis > static_cast<int64_t>(input.shape.size())) throw std::runtime_error("Flatten axis is invalid");
-    return {make_output(context, 0, {product(input.shape, 0, axis), product(input.shape, axis, input.shape.size())}, input.elem_type)};
+    return {make_output(context, 0, {product(input.shape, 0, axis), product(input.shape, axis, input.shape.size())}, input.dtype)};
 }
 
 }  // namespace aiinfra::onnx::operators

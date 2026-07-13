@@ -14,7 +14,7 @@ std::vector<TensorInfo> GemmOperator::infer_shape(const OperatorContext& context
     const bool trans_b = context.int_attribute("transB", 0) != 0;
     const Dimension rows = trans_a ? lhs.shape[1] : lhs.shape[0];
     const Dimension columns = trans_b ? rhs.shape[0] : rhs.shape[1];
-    return {make_output(context, 0, {rows, columns}, lhs.elem_type)};
+    return {make_output(context, 0, {rows, columns}, lhs.dtype)};
 }
 
 }  // namespace aiinfra::onnx::operators

@@ -6,13 +6,13 @@
 namespace aiinfra::onnx::operators {
 
 TensorInfo make_output(const OperatorContext& context, std::size_t index, Shape shape,
-                       int32_t elem_type) {
+                       DataType dtype) {
     if (index >= context.node().outputs.size()) {
         throw std::runtime_error("operator output index is invalid");
     }
     TensorInfo result;
     result.name = context.node().outputs[index];
-    result.elem_type = elem_type;
+    result.dtype = dtype;
     result.shape = std::move(shape);
     result.shape_inferred = true;
     return result;

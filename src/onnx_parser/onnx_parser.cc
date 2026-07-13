@@ -14,6 +14,16 @@
 namespace aiinfra::onnx {
 namespace {
 
+DataType onnx_data_type(int32_t type) {
+    switch (type) {
+    case ::onnx::TensorProto::FLOAT: return DataType::Float32;
+    case ::onnx::TensorProto::FLOAT16: return DataType::Float16;
+    case ::onnx::TensorProto::INT32: return DataType::Int32;
+    case ::onnx::TensorProto::INT64: return DataType::Int64;
+    default: return DataType::Unknown;
+    }
+}
+
 Dimension parse_dimension(const ::onnx::TensorShapeProto_Dimension& dim) {
     Dimension result;
     if (dim.has_dim_value()) {
@@ -34,6 +44,7 @@ TensorInfo parse_value_info(const ::onnx::ValueInfoProto& value) {
 
     const auto& tensor_type = value.type().tensor_type();
     result.elem_type = tensor_type.elem_type();
+    result.dtype = onnx_data_type(result.elem_type);
     if (tensor_type.has_shape()) {
         for (const auto& dim : tensor_type.shape().dim()) {
             result.shape.push_back(parse_dimension(dim));
@@ -47,6 +58,7 @@ TensorInfo parse_initializer(const ::onnx::TensorProto& initializer) {
     TensorInfo result;
     result.name = initializer.name();
     result.elem_type = initializer.data_type();
+    result.dtype = onnx_data_type(result.elem_type);
     result.is_initializer = true;
     for (const auto dim : initializer.dims()) {
         Dimension parsed;

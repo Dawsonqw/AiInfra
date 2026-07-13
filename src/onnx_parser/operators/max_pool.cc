@@ -15,7 +15,7 @@ std::vector<TensorInfo> MaxPoolOperator::infer_shape(const OperatorContext& cont
     Shape shape = input.shape;
     shape[2] = convolution_dimension(input.shape[2], kernel[0], strides[0], pads[0], pads[2], 1);
     shape[3] = convolution_dimension(input.shape[3], kernel[1], strides[1], pads[1], pads[3], 1);
-    return {make_output(context, 0, std::move(shape), input.elem_type)};
+    return {make_output(context, 0, std::move(shape), input.dtype)};
 }
 
 }  // namespace aiinfra::onnx::operators

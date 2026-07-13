@@ -26,11 +26,11 @@ int main(int argc, char** argv) {
         std::cout << "graph=" << graph.name << " nodes=" << graph.nodes.size()
                   << " initializers=" << graph.initializers.size() << "\n";
         for (const auto& input : graph.inputs) {
-            std::cout << "input " << input.name << " dtype=" << input.elem_type
+            std::cout << "input " << input.name << " dtype=" << aiinfra::onnx::data_type_name(input.dtype)
                       << " shape=" << shape_to_string(input) << "\n";
         }
         for (const auto& output : graph.outputs) {
-            std::cout << "output " << output.name << " dtype=" << output.elem_type
+            std::cout << "output " << output.name << " dtype=" << aiinfra::onnx::data_type_name(output.dtype)
                       << " shape=" << shape_to_string(output) << "\n";
         }
         for (const auto index : graph.topological_order) {

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "onnx_parser/op_kind.h"
+#include "onnx_parser/data_type.h"
 
 namespace aiinfra::onnx {
 
@@ -18,6 +19,7 @@ struct Dimension {
 struct TensorInfo {
     std::string name;
     int32_t elem_type = 0;
+    DataType dtype = DataType::Unknown;
     std::vector<Dimension> shape;
     bool is_initializer = false;
     int64_t initializer_bytes = 0;

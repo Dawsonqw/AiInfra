@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
-project(aiinfra_onnx_parser LANGUAGES CXX)
+project(aiinfra_onnx_parser LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 option(AIINFRA_USE_BUNDLED_THIRDPARTY "Build third-party dependencies from submodules" ON)
 option(AIINFRA_BUILD_BENCHMARKS "Build parser benchmarks" ON)
@@ -26,6 +28,7 @@ if(AIINFRA_USE_BUNDLED_THIRDPARTY)
 endif()
 
 find_package(Protobuf REQUIRED)
+find_package(CUDAToolkit REQUIRED)
 if(NOT AIINFRA_USE_BUNDLED_THIRDPARTY)
     find_package(spdlog CONFIG REQUIRED)
 endif()
@@ -35,6 +38,7 @@ add_library(onnx_parser
     src/onnx_parser/operator.cc
     src/onnx_parser/operator_registry.cc
     src/onnx_parser/op_kind.cc
+    src/onnx_parser/data_type.cc
     src/onnx_parser/onnx_op_mapping.cc
     src/onnx_parser/shape_inference.cc
     src/onnx_parser/operators/common.cc
@@ -56,6 +60,17 @@ target_link_libraries(onnx_parser PUBLIC protobuf::libprotobuf)
 target_link_libraries(onnx_parser PUBLIC spdlog::spdlog)
 target_compile_options(onnx_parser PRIVATE -Wall -Wextra -Wpedantic)
 
+add_library(cuda_backend
+    src/backend/cuda/cuda_tensor.cc
+    src/backend/cuda/cuda_operator_registry.cc
+    src/backend/cuda/cuda_executor.cc
+    src/backend/cuda/operators/identity.cu
+    src/backend/cuda/operators/relu.cu
+)
+target_include_directories(cuda_backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(cuda_backend PUBLIC onnx_parser CUDA::cudart)
+set_target_properties(cuda_backend PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
 add_executable(onnx_parser_cli src/onnx_parser/main.cc)
 target_link_libraries(onnx_parser_cli PRIVATE onnx_parser)
 
@@ -65,6 +80,10 @@ if(BUILD_TESTING AND AIINFRA_USE_BUNDLED_THIRDPARTY)
     target_link_libraries(onnx_parser_test PRIVATE onnx_parser)
     target_link_libraries(onnx_parser_test PRIVATE GTest::gtest_main)
     add_test(NAME onnx_parser_test COMMAND onnx_parser_test)
+
+    add_executable(cuda_backend_test tests/cuda_backend_test.cc)
+    target_link_libraries(cuda_backend_test PRIVATE cuda_backend GTest::gtest_main)
+    add_test(NAME cuda_backend_test COMMAND cuda_backend_test)
 endif()
 
 if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
