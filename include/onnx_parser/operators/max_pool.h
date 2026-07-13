@@ -7,7 +7,7 @@ namespace aiinfra::onnx::operators {
 class MaxPoolOperator final : public Operator {
 public:
     std::vector<TensorInfo> infer_shape(const OperatorContext& context) const override;
-    const char* type() const noexcept override { return "MaxPool"; }
+    OpKind type() const noexcept override { return OpKind::MaxPool; }
 };
 
 }  // namespace aiinfra::onnx::operators

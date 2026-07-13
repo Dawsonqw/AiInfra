@@ -57,6 +57,11 @@ build/onnx_parser_cli asserts/resnet18.onnx
 `src/onnx_parser/operators/` 下：每个算子拥有独立实现文件，`common.*` 放置
 公共 shape/属性辅助函数，`register_builtin.cc` 只负责内置算子注册。
 
+核心节点使用 `OpKind` enum，不直接依赖 ONNX 的字符串名称。ONNX 的
+`op_type/domain` 仅在 `onnx_op_mapping.*` 中转换为内部类型；以后接入其他模型
+格式时，只需新增对应 adapter 映射到同一组 `OpKind`，算子实现和 CUDA executor
+无需感知模型来源。未知扩展算子会保留原始名称，并在 shape inference 阶段给出清晰错误。
+
 ### 算子扩展模型
 
 算子由 `Operator` 多态基类定义，核心接口是：

@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 #include "onnx/onnx.pb.h"
+#include "onnx_parser/onnx_op_mapping.h"
 #include "onnx_parser/shape_inference.h"
 
 namespace aiinfra::onnx {
@@ -90,7 +91,8 @@ NodeInfo parse_node(const ::onnx::NodeProto& node, int32_t index) {
     NodeInfo result;
     result.index = index;
     result.name = node.name();
-    result.op_type = node.op_type();
+    result.kind = onnx_op_kind(node.op_type(), node.domain());
+    result.source_op_type = node.op_type();
     result.domain = node.domain();
     result.inputs.assign(node.input().begin(), node.input().end());
     result.outputs.assign(node.output().begin(), node.output().end());

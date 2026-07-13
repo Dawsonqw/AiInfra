@@ -20,7 +20,8 @@ TensorInfo make_output(const OperatorContext& context, std::size_t index, Shape 
 
 const TensorInfo& require_input(const OperatorContext& context, std::size_t index) {
     if (index >= context.inputs().size() || context.inputs()[index] == nullptr) {
-        throw std::runtime_error("operator input is missing: " + context.node().op_type);
+        throw std::runtime_error("operator input is missing: " +
+                                 op_kind_name(context.node().kind));
     }
     return *context.inputs()[index];
 }

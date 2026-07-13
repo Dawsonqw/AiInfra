@@ -7,7 +7,7 @@ namespace aiinfra::onnx::operators {
 class GemmOperator final : public Operator {
 public:
     std::vector<TensorInfo> infer_shape(const OperatorContext& context) const override;
-    const char* type() const noexcept override { return "Gemm"; }
+    OpKind type() const noexcept override { return OpKind::Gemm; }
 };
 
 }  // namespace aiinfra::onnx::operators

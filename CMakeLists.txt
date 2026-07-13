@@ -34,6 +34,8 @@ add_library(onnx_parser
     src/onnx_parser/onnx_parser.cc
     src/onnx_parser/operator.cc
     src/onnx_parser/operator_registry.cc
+    src/onnx_parser/op_kind.cc
+    src/onnx_parser/onnx_op_mapping.cc
     src/onnx_parser/shape_inference.cc
     src/onnx_parser/operators/common.cc
     src/onnx_parser/operators/unary.cc

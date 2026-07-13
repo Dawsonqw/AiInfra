@@ -34,7 +34,7 @@ class Operator {
 public:
     virtual ~Operator() = default;
     virtual std::vector<TensorInfo> infer_shape(const OperatorContext& context) const = 0;
-    virtual const char* type() const noexcept = 0;
+    virtual OpKind type() const noexcept = 0;
 };
 
 }  // namespace aiinfra::onnx

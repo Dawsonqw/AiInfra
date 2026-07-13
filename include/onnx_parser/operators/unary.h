@@ -1,21 +1,19 @@
 #pragma once
 
-#include <string>
-#include <utility>
-
+#include "onnx_parser/op_kind.h"
 #include "onnx_parser/operator.h"
 
 namespace aiinfra::onnx::operators {
 
 class UnaryOperator : public Operator {
 public:
-    explicit UnaryOperator(std::string type) : type_(std::move(type)) {}
+    explicit UnaryOperator(OpKind type) : type_(type) {}
 
     std::vector<TensorInfo> infer_shape(const OperatorContext& context) const override;
-    const char* type() const noexcept override { return type_.c_str(); }
+    OpKind type() const noexcept override { return type_; }
 
 private:
-    std::string type_;
+    OpKind type_ = OpKind::Unknown;
 };
 
 }  // namespace aiinfra::onnx::operators

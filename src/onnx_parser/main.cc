@@ -35,7 +35,8 @@ int main(int argc, char** argv) {
         }
         for (const auto index : graph.topological_order) {
             const auto& node = graph.nodes[index];
-            std::cout << "node[" << index << "] " << node.op_type << " name=" << node.name
+            std::cout << "node[" << index << "] " << aiinfra::onnx::op_kind_name(node.kind)
+                      << " name=" << node.name
                       << " inputs=" << node.inputs.size() << " outputs=" << node.outputs.size() << "\n";
         }
         return 0;

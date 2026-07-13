@@ -21,15 +21,15 @@ void register_builtin_operators(OperatorRegistry& registry) {
     using operators::MaxPoolOperator;
     using operators::UnaryOperator;
 
-    registry.register_operator("Identity", [] { return std::make_unique<UnaryOperator>("Identity"); });
-    registry.register_operator("Relu", [] { return std::make_unique<UnaryOperator>("Relu"); });
-    registry.register_operator("BatchNormalization", [] { return std::make_unique<BatchNormalizationOperator>(); });
-    registry.register_operator("Add", [] { return std::make_unique<AddOperator>(); });
-    registry.register_operator("Conv", [] { return std::make_unique<ConvOperator>(); });
-    registry.register_operator("MaxPool", [] { return std::make_unique<MaxPoolOperator>(); });
-    registry.register_operator("GlobalAveragePool", [] { return std::make_unique<GlobalAveragePoolOperator>(); });
-    registry.register_operator("Flatten", [] { return std::make_unique<FlattenOperator>(); });
-    registry.register_operator("Gemm", [] { return std::make_unique<GemmOperator>(); });
+    registry.register_operator(OpKind::Identity, [] { return std::make_unique<UnaryOperator>(OpKind::Identity); });
+    registry.register_operator(OpKind::Relu, [] { return std::make_unique<UnaryOperator>(OpKind::Relu); });
+    registry.register_operator(OpKind::BatchNormalization, [] { return std::make_unique<BatchNormalizationOperator>(); });
+    registry.register_operator(OpKind::Add, [] { return std::make_unique<AddOperator>(); });
+    registry.register_operator(OpKind::Conv, [] { return std::make_unique<ConvOperator>(); });
+    registry.register_operator(OpKind::MaxPool, [] { return std::make_unique<MaxPoolOperator>(); });
+    registry.register_operator(OpKind::GlobalAveragePool, [] { return std::make_unique<GlobalAveragePoolOperator>(); });
+    registry.register_operator(OpKind::Flatten, [] { return std::make_unique<FlattenOperator>(); });
+    registry.register_operator(OpKind::Gemm, [] { return std::make_unique<GemmOperator>(); });
 }
 
 }  // namespace aiinfra::onnx

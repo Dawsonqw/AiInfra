@@ -5,6 +5,8 @@
 #include <variant>
 #include <vector>
 
+#include "onnx_parser/op_kind.h"
+
 namespace aiinfra::onnx {
 
 struct Dimension {
@@ -36,7 +38,9 @@ struct AttributeInfo {
 struct NodeInfo {
     int32_t index = 0;
     std::string name;
-    std::string op_type;
+    OpKind kind = OpKind::Unknown;
+    // 仅用于格式适配失败时提供可诊断的原始名称。
+    std::string source_op_type;
     std::string domain;
     std::vector<std::string> inputs;
     std::vector<std::string> outputs;

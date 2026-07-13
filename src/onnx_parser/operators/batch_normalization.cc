@@ -3,6 +3,6 @@
 namespace aiinfra::onnx::operators {
 
 BatchNormalizationOperator::BatchNormalizationOperator()
-    : UnaryOperator("BatchNormalization") {}
+    : UnaryOperator(OpKind::BatchNormalization) {}
 
 }  // namespace aiinfra::onnx::operators

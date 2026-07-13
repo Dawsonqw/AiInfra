@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include "onnx/onnx.pb.h"
+#include "onnx_parser/onnx_op_mapping.h"
 #include "onnx_parser/operator_registry.h"
 
 namespace {
@@ -54,11 +55,17 @@ TEST(OnnxParserTest, BuildsTopologicalOrderAndInfersShapes) {
 TEST(OperatorRegistryTest, CreatesRegisteredBuiltinOperator) {
     aiinfra::onnx::OperatorRegistry registry;
     aiinfra::onnx::register_builtin_operators(registry);
-    EXPECT_TRUE(registry.contains("Conv"));
-    EXPECT_TRUE(registry.contains("Relu"));
+    EXPECT_TRUE(registry.contains(aiinfra::onnx::OpKind::Conv));
+    EXPECT_TRUE(registry.contains(aiinfra::onnx::OpKind::Relu));
     aiinfra::onnx::NodeInfo node;
-    node.op_type = "Relu";
+    node.kind = aiinfra::onnx::OpKind::Relu;
     EXPECT_NE(registry.create(node), nullptr);
+}
+
+TEST(OnnxOpMappingTest, ConvertsFormatNameToInternalKind) {
+    EXPECT_EQ(aiinfra::onnx::onnx_op_kind("Conv"), aiinfra::onnx::OpKind::Conv);
+    EXPECT_EQ(aiinfra::onnx::onnx_op_kind("Relu", "ai.onnx"), aiinfra::onnx::OpKind::Relu);
+    EXPECT_EQ(aiinfra::onnx::onnx_op_kind("VendorOp", "com.vendor"), aiinfra::onnx::OpKind::Unknown);
 }
 
 }  // namespace

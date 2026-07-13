@@ -7,7 +7,7 @@ namespace aiinfra::onnx::operators {
 class ConvOperator final : public Operator {
 public:
     std::vector<TensorInfo> infer_shape(const OperatorContext& context) const override;
-    const char* type() const noexcept override { return "Conv"; }
+    OpKind type() const noexcept override { return OpKind::Conv; }
 };
 
 }  // namespace aiinfra::onnx::operators

@@ -44,18 +44,22 @@ void update_graph_views(GraphInfo* graph, const std::unordered_map<std::string, 
 
 void ShapeInference::infer(GraphInfo& graph) const {
     auto& registry = OperatorRegistry::global();
-    if (!registry.contains("Identity")) register_builtin_operators(registry);
+    if (!registry.contains(OpKind::Identity)) register_builtin_operators(registry);
 
     std::unordered_map<std::string, TensorInfo> tensors;
     collect_tensors(graph, &tensors);
     for (const auto node_index : graph.topological_order) {
         const auto& node = graph.nodes.at(static_cast<std::size_t>(node_index));
-        if (!registry.contains(node.op_type, node.domain)) {
+        if (!registry.contains(node.kind)) {
             if (allow_unknown_operators_) {
-                spdlog::warn("shape inference skipped unregistered operator {}", node.op_type);
+                spdlog::warn("shape inference skipped unregistered operator {}",
+                              node.source_op_type.empty() ? op_kind_name(node.kind)
+                                                           : node.source_op_type);
                 continue;
             }
-            throw std::runtime_error("shape inference requires registered operator: " + node.op_type);
+            throw std::runtime_error("shape inference requires registered operator: " +
+                                     (node.source_op_type.empty() ? op_kind_name(node.kind)
+                                                                  : node.source_op_type));
         }
 
         std::vector<const TensorInfo*> inputs;
@@ -72,7 +76,8 @@ void ShapeInference::infer(GraphInfo& graph) const {
         const auto operation = registry.create(node);
         const auto inferred = operation->infer_shape(OperatorContext(node, std::move(inputs), node.outputs.size()));
         if (inferred.size() != node.outputs.size()) {
-            throw std::runtime_error("operator returned an incorrect output count: " + node.op_type);
+            throw std::runtime_error("operator returned an incorrect output count: " +
+                                     op_kind_name(node.kind));
         }
         for (const auto& tensor : inferred) tensors[tensor.name] = tensor;
     }

@@ -4,29 +4,28 @@
 
 namespace aiinfra::onnx {
 
-std::string OperatorRegistry::key(const std::string& op_type, const std::string& domain) {
-    return (domain.empty() ? "ai.onnx" : domain) + ":" + op_type;
-}
-
-void OperatorRegistry::register_operator(std::string op_type, Creator creator,
-                                         std::string domain) {
-    if (op_type.empty() || !creator) throw std::invalid_argument("operator registration is invalid");
-    const auto operator_key = key(op_type, domain);
-    if (!creators_.emplace(operator_key, std::move(creator)).second) {
-        throw std::invalid_argument("operator already registered: " + operator_key);
+void OperatorRegistry::register_operator(OpKind op_type, Creator creator) {
+    if (op_type == OpKind::Unknown || !creator) {
+        throw std::invalid_argument("operator registration is invalid");
+    }
+    if (!creators_.emplace(op_type, std::move(creator)).second) {
+        throw std::invalid_argument("operator already registered: " + op_kind_name(op_type));
     }
 }
 
 std::unique_ptr<Operator> OperatorRegistry::create(const NodeInfo& node) const {
-    const auto found = creators_.find(key(node.op_type, node.domain));
+    const auto found = creators_.find(node.kind);
     if (found == creators_.end()) {
-        throw std::runtime_error("operator is not registered: " + key(node.op_type, node.domain));
+        const auto source_name = node.source_op_type.empty()
+            ? op_kind_name(node.kind)
+            : node.source_op_type;
+        throw std::runtime_error("operator is not registered: " + source_name);
     }
     return found->second();
 }
 
-bool OperatorRegistry::contains(const std::string& op_type, const std::string& domain) const noexcept {
-    return creators_.find(key(op_type, domain)) != creators_.end();
+bool OperatorRegistry::contains(OpKind op_type) const noexcept {
+    return creators_.find(op_type) != creators_.end();
 }
 
 OperatorRegistry& OperatorRegistry::global() {
