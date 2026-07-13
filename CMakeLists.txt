@@ -91,6 +91,11 @@ if(BUILD_TESTING AND AIINFRA_USE_BUNDLED_THIRDPARTY)
 endif()
 
 if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
+    add_executable(cuda_relu_operator_benchmark benchmarks/cuda_relu_operator_benchmark.cc)
+    target_link_libraries(cuda_relu_operator_benchmark PRIVATE cuda_backend benchmark::benchmark)
+endif()
+
+if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
     add_executable(onnx_parser_benchmark benchmarks/onnx_parser_benchmark.cc)
     target_compile_definitions(onnx_parser_benchmark PRIVATE
         AIINFRA_ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/asserts")

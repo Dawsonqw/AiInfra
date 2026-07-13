@@ -83,13 +83,15 @@ ctest --test-dir build-cuda --output-on-failure
 当前 executor 使用单 stream 和每个 Tensor 独立分配的简单策略，暂未引入 workspace
 复用、memory planner、initializer 上传策略和 Conv kernel。
 
-不经过 Executor 的单算子测试示例位于
-`tests/cuda_relu_operator_test.cc`，直接调用 `ReluOperator`，使用 `cudaEvent_t`
-分别统计 warmup 后的 H2D、kernel、D2H 平均耗时和有效带宽，并用独立 CPU ReLU
-结果验证数值正确性：
+不经过 Executor 的单算子 correctness 测试位于
+`tests/cuda_relu_operator_test.cc`，只负责直接调用 `ReluOperator` 并用独立 CPU
+ReLU 结果验证数值正确性。性能 benchmark 独立位于
+`benchmarks/cuda_relu_operator_benchmark.cc`，使用 Google Benchmark 和
+`cudaEvent_t` 统计 warmup 后的 H2D、kernel、D2H 平均耗时和有效带宽：
 
 ```bash
 build-cuda/cuda_relu_operator_test --gtest_filter=CudaReluOperatorTest.*
+build-cuda/cuda_relu_operator_benchmark --benchmark_min_time=0.1s
 ```
 
 其中 kernel 带宽按一次读加一次写计算：`2 * tensor_bytes / kernel_time`；H2D/D2H
