@@ -24,3 +24,63 @@ ls include/onnx/onnx.pb.h include/onnx/onnx.pb.cc
 ```
 
 其中，`onnx.proto` 是 ONNX v1.19.1 的协议定义，`onnx.pb.h` 和 `onnx.pb.cc` 是 `protoc` 生成的 C++ 文件。若更换 ONNX 版本，请同步更新下载地址并重新生成代码。
+
+## ResNet-18 ONNX Parser
+
+项目提供一个不依赖具体算子实现的 ONNX 计算图解析器。它将 protobuf 中的
+`ModelProto/GraphProto` 转换为稳定的 C++ IR，包含模型元信息、图输入输出、
+initializer、节点属性摘要以及拓扑序，后续 CUDA executor 可以直接基于这些
+结构实现算子调度。
+
+使用当前 uv 虚拟环境导出可复用的 torchvision ResNet-18：
+
+```bash
+.venv/bin/python scripts/export_resnet18.py
+```
+
+模型保存到 `asserts/resnet18.onnx`，输入固定为 `[1, 3, 224, 224]`。
+
+构建、测试并解析模型：
+
+```bash
+cmake -S . -B build
+cmake --build build -j2
+ctest --test-dir build --output-on-failure
+build/onnx_parser_cli asserts/resnet18.onnx
+```
+
+解析器会检查重复 tensor producer、未知输入、输入与 initializer 命名冲突以及
+计算图环路；节点原始顺序保存在 `GraphInfo::nodes`，可执行拓扑顺序保存在
+`GraphInfo::topological_order`。
+
+### 算子扩展模型
+
+算子由 `Operator` 多态基类定义，核心接口是：
+
+```cpp
+class MyOperator final : public Operator {
+public:
+    std::vector<TensorInfo> infer_shape(const OperatorContext& context) const override;
+    const char* type() const noexcept override { return "MyOp"; }
+};
+
+OperatorRegistry::global().register_operator(
+    "MyOp", [] { return std::make_unique<MyOperator>(); });
+```
+
+`OperatorRegistry` 负责按 `domain:op_type` 创建实例，`ShapeInference` 按计算图拓扑
+顺序调用 `infer_shape`，并把结果回写到 `GraphInfo::tensors` 和 graph outputs。
+内置算子目前覆盖 ResNet-18 所需的 `Identity`、`Conv`、`Relu`、`MaxPool`、
+`BatchNormalization`、`Add`、`GlobalAveragePool`、`Flatten`、`Gemm`。
+
+### 第三方依赖
+
+GoogleTest、Google Benchmark 和 spdlog 通过 Git submodule 管理：
+
+```bash
+git submodule update --init --recursive
+cmake -S . -B build -DAIINFRA_USE_BUNDLED_THIRDPARTY=ON
+```
+
+关闭 `AIINFRA_USE_BUNDLED_THIRDPARTY` 可在已有系统依赖环境中复用 protobuf；
+但测试和 benchmark target 需要 bundled dependencies。
