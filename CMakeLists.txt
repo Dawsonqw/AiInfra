@@ -84,6 +84,10 @@ if(BUILD_TESTING AND AIINFRA_USE_BUNDLED_THIRDPARTY)
     add_executable(cuda_backend_test tests/cuda_backend_test.cc)
     target_link_libraries(cuda_backend_test PRIVATE cuda_backend GTest::gtest_main)
     add_test(NAME cuda_backend_test COMMAND cuda_backend_test)
+
+    add_executable(cuda_relu_operator_test tests/cuda_relu_operator_test.cc)
+    target_link_libraries(cuda_relu_operator_test PRIVATE cuda_backend GTest::gtest_main)
+    add_test(NAME cuda_relu_operator_test COMMAND cuda_relu_operator_test)
 endif()
 
 if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
