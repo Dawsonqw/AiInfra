@@ -66,6 +66,7 @@ add_library(cuda_backend
     src/backend/cuda/cuda_executor.cc
     src/backend/cuda/operators/identity.cu
     src/backend/cuda/operators/relu.cu
+    src/backend/cuda/operators/add.cu
 )
 target_include_directories(cuda_backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(cuda_backend PUBLIC onnx_parser CUDA::cudart)
@@ -88,11 +89,18 @@ if(BUILD_TESTING AND AIINFRA_USE_BUNDLED_THIRDPARTY)
     add_executable(cuda_relu_operator_test tests/cuda_relu_operator_test.cc)
     target_link_libraries(cuda_relu_operator_test PRIVATE cuda_backend GTest::gtest_main)
     add_test(NAME cuda_relu_operator_test COMMAND cuda_relu_operator_test)
+
+    add_executable(cuda_add_operator_test tests/cuda_add_operator_test.cc)
+    target_link_libraries(cuda_add_operator_test PRIVATE cuda_backend GTest::gtest_main)
+    add_test(NAME cuda_add_operator_test COMMAND cuda_add_operator_test)
 endif()
 
 if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
     add_executable(cuda_relu_operator_benchmark benchmarks/cuda_relu_operator_benchmark.cc)
     target_link_libraries(cuda_relu_operator_benchmark PRIVATE cuda_backend benchmark::benchmark)
+
+    add_executable(cuda_add_operator_benchmark benchmarks/cuda_add_operator_benchmark.cc)
+    target_link_libraries(cuda_add_operator_benchmark PRIVATE cuda_backend benchmark::benchmark)
 endif()
 
 if(AIINFRA_BUILD_BENCHMARKS AND AIINFRA_USE_BUNDLED_THIRDPARTY)
